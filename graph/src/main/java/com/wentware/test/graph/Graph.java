@@ -1,6 +1,5 @@
 package com.wentware.test.graph;
 
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
@@ -9,62 +8,57 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * Implentation of a directed ayclic graph with nodes and edges
+ * Implementation of a directed 'acyclic' graph with named vertices and weighted edges
+ * no enforcement of acyclic
  */
-@Data
+@Value
 public class Graph {
-    Set<Node> nodes;
+    Set<Vertex> vertices = new HashSet<>();
 
-    public Graph() {
-        this.nodes = new HashSet<>();
-    }
-
-    public Node addNode(String id) {
-        Optional<Node> nodeById = findNodeById(id);
-        if (nodeById.isPresent()) {
-            return nodeById.get();
+    public Vertex addVertex(String id) {
+        Optional<Vertex> vertexById = findVertexById(id);
+        if (vertexById.isPresent()) {
+            return vertexById.get();
         }
-        Node nodeToAdd = new Node(id);
-        nodes.add(nodeToAdd);
-        return nodeToAdd;
+        Vertex vertexToAdd = new Vertex(id);
+        vertices.add(vertexToAdd);
+        return vertexToAdd;
     }
 
-    public Optional<Node> findNodeById(String id) {
-        return nodes.stream().filter(v -> id.equals(v.getId())).findFirst();
+    public Optional<Vertex> findVertexById(String id) {
+        return vertices
+                .stream()
+                .filter(v -> id.equals(v.getId()))
+                .findFirst();
     }
 
     @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-    @Data
-    public static class Node {
+    @Value
+    public static class Vertex {
         @EqualsAndHashCode.Include String id;
-        Set<Edge> edges;
-        boolean isVisited;
+        Set<Edge> edges = new HashSet<>();
 
-        public Node(String id) {
-            this.edges = new HashSet<>();
-            this.id = id;
-        }
-
-        public Node addEdgeTo(Node toNode, int weight) {
-            Edge edge = new Edge(this, toNode, weight);
+        public Vertex addEdgeTo(Vertex toVertex, int weight) {
+            Edge edge = new Edge(this, toVertex, weight);
             edges.add(edge);
             return this;
         }
 
+        Optional<Edge> findEdgeByToId(String toVertexId) {
+            return getEdges()
+                    .stream()
+                    .filter(n -> n.toVertex().getId().equals(toVertexId))
+                    .findFirst();
+        }
+
         @Override
         public String toString() {
-            return id;
-        }
-
-        Optional<Edge> findEdgeByToId(String toNodeId) {
-            return getEdges().stream().filter(n -> n.getToNode().getId().equals(toNodeId)).findFirst();
+            return this.getId();
         }
     }
 
-    @Value
-    public static class Edge {
-        Node fromNode;
-        Node toNode;
-        int weight;
-    }
+    record Edge(
+        Vertex fromVertex,
+        Vertex toVertex,
+        int weight) {}
 }
