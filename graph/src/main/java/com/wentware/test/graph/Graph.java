@@ -57,7 +57,7 @@ public class Graph {
         }
     }
 
-    record Edge(
+    public record Edge(
         Vertex fromVertex,
         Vertex toVertex,
         int weight) {}

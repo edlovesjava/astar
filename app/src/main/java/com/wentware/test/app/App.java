@@ -16,8 +16,8 @@ public class App {
     private int run(String[] args) {
         //todo replace with filename and parse
         Graph g = buildSimpleMazeGraph();
-        AStar a = new AStar(g);
-        AStar.Solution solution = a.solve();
+        AStar a = new AStar(g, EucHeuristicCalc.getHeuristic());
+        AStar.Solution solution = a.solve(g.findVertexById("B0").orElseThrow(),g.findVertexById("B4").orElseThrow());
         System.out.println("cost="+solution.cost()+",path="+ solution.bestPath());
 
         return 0; //ok

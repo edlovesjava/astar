@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,9 +19,11 @@ class AStarTest {
         InputStream inputStream = new FileInputStream(file);
         Graph graph = GraphParser.parse(inputStream);
 
-        AStar aStar = new AStar(graph);
+        AStar aStar = new AStar(graph, EucHeuristicCalc.getHeuristic());
 
-        assertNotNull(aStar);
+        AStar.Solution solution = aStar.solve(graph.findVertexById("B0").orElseThrow(), graph.findVertexById("B4").orElseThrow());
+
+        assertNotNull(solution);
     }
 
 }
