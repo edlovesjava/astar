@@ -4,23 +4,15 @@
 package com.wentware.test.app;
 
 import com.wentware.test.graph.Graph;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 public class App {
     public static void main(String[] args) {
         App app = new App();
 
         int res = app.run(args);
         System.exit(res);
-    }
-
-    private int run(String[] args) {
-        //todo replace with filename and parse
-        Graph g = buildSimpleMazeGraph();
-        AStar a = new AStar(g, EucHeuristicCalc.getHeuristic());
-        AStar.Solution solution = a.solve(g.findVertexById("B0").orElseThrow(),g.findVertexById("B4").orElseThrow());
-        System.out.println("cost="+solution.cost()+",path="+ solution.bestPath());
-
-        return 0; //ok
     }
 
     /*
@@ -101,6 +93,19 @@ E   |     |        |
         e4.addEdgeTo(d4, 1);
 
         return myGraph;
+    }
+
+    private int run(String[] args) {
+        //todo replace with filename and parse
+        Graph g = buildSimpleMazeGraph();
+        Graph.Vertex source = g.findVertexById("B0").orElseThrow();
+        Graph.Vertex goal = g.findVertexById("B4").orElseThrow();
+        EucHeuristicCalc eucHeuristicCalc = new EucHeuristicCalc(goal.getId());
+        AStar a = new AStar(g, eucHeuristicCalc.getHeuristic());
+
+        AStar.Solution solution = a.solve(source, goal);
+        log.info("cost={},path={}", solution.cost(), solution.bestPath());
+        return 0; //ok
     }
 
 }

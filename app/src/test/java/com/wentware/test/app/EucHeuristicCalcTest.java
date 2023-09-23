@@ -12,7 +12,7 @@ class EucHeuristicCalcTest {
         Graph g = new Graph();
         Graph.Vertex fromV = g.addVertex("B0");
         Graph.Vertex toV = g.addVertex("E4");
-        int h = EucHeuristicCalc.getHeuristic().apply(fromV, toV);
+        int h = new EucHeuristicCalc(toV.getId()).getHeuristic().apply(fromV.getId());
         assertEquals(5, h);
     }
 
